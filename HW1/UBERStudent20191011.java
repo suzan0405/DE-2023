@@ -64,12 +64,11 @@ public class UBERStudent20191011
 	public static class UBERStudent20191011 extends Reducer<Text,Text,Text,Text> {
 //		private Text result = new Text();
 //		
-		public void reduce(Text key, Text value, Context context ) throws IOException, InterruptedException {
-//			for (Text val : values) {
-//				sum += val.get();
-//			}
-//			result.set(sum);
-			context.write(key, value);
+		public void reduce(Text key, Iterable<Text> values, Context context ) throws IOException, InterruptedException {
+			for (Text val : values) {
+				result.set(val);
+				context.write(key, result);
+			}
 		}
 	}
 
