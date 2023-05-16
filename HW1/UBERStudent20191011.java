@@ -83,7 +83,7 @@ public class UBERStudent20191011
 				vehiclesSum += vehicle;
 				tripsSum += trip;
 			}
-			result.set(tripsSum + "," + vehicleSum);
+			result.set(tripsSum + "," + vehiclesSum);
 			context.write(key, result);
 		}
 	}
