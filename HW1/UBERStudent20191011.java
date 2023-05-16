@@ -23,7 +23,7 @@ public class UBERStudent20191011
 				case 2:
 					return "TUE";
 				case 3:
-					return "WEN";
+					return "WED";
 				case 4:
 					return "THR";
 				case 5:
