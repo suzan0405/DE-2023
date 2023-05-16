@@ -11,8 +11,8 @@ import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.input.*;
 import org.apache.hadoop.mapreduce.lib.output.*;
 import org.apache.hadoop.util.GenericOptionsParser;
-// import org.apache.hadoop.fs.FSDataInputStream;
-// import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FSDataOutputStream;
 
 public class UBERStudent20191011
 {
@@ -97,8 +97,8 @@ public class UBERStudent20191011
 		job.setReducerClass(UBERStudent20191011Reducer.class);
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
-// 		job.setInputFormatClass(TextInputFormat.class);
-// 		job.setOutputFormatClass(TextOutputFormat.class);
+		job.setInputFormatClass(TextInputFormat.class);
+		job.setOutputFormatClass(TextOutputFormat.class);
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 		FileSystem.get(job.getConfiguration()).delete( new Path(args[1]), true);
