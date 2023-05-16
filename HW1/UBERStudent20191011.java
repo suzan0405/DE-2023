@@ -1,8 +1,6 @@
-import java.io.IOException;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
+import java.io.*;
 import java.util.*;
-
+import java.text.SimpleDateFormat;
 import org.apache.hadoop.conf.*;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -13,6 +11,7 @@ import org.apache.hadoop.mapreduce.lib.output.*;
 import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
+
 
 public class UBERStudent20191011
 {
@@ -35,28 +34,35 @@ public class UBERStudent20191011
 			}
 	}
 	
-	public static class UBERStudent20191011Mapper extends Mapper<Object, Text, Text, Text>{
+	public static class UBERStudent20191011Mapper extends Mapper<LongWritable, Text, Text, Text>{
 		private Text word = new Text();
 		private Text value = new Text();
 		
-		public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			StringTokenizer itr = new StringTokenizer(value.toString(), ",");
 			String baseNum = itr.nextToken().trim();
-			
 			String date = itr.nextToken().trim();
-			String[] d = date.split("/");
-			int month = d[0];
-			int day = d[1];
-			int year = d[2];
-			
 			int vehicle = Integer.parseInt(itr.nextToken().trim());
 			int trip = Integer.parseInt(itr.nextToken().trim());
 			
-			LocalDate date = LocalDate.of(year, month, day);
-			DayOfWeek dayOfWeek = date.getDayOfWeek();
-			int dayOfWeekNumber = dayOfWeek.getValue();
+			 int day = -1;
+         		try {
+                                SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+                                Date dateObj = sdf.parse(date);
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTime(dateObj);
+                                day = cal.get(Calendar.DAY_OF_WEEK);
+            			if (day == 1) {
+               				day = 7;
+            			}
+            			else {
+               				day -= 1;
+           			 }
+                        } catch(Exception e) {
+                                e.printStackTrace();
+                        }  
 			
-			word.set(baseNum + "," + dayOfWeekNumber);
+			word.set(baseNum + "," + day);
 			value.set(trip + "," + vehicle);
 			context.write(word, value);
 		}	
