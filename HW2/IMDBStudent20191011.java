@@ -71,10 +71,10 @@ public class IMDBStudent20191011
         }
     }
 
-	public static class IMDBStudent20191011Mapper extends Mapper<Object, Text, Text, Text>{
+	public static class IMDBStudent20191011Mapper extends Mapper<Text, Text, Text, Text>{
         boolean file_movies = true;
 		
-		public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+		public void map(Text key, Text value, Context context) throws IOException, InterruptedException {
 			String s = value.toString();
 			String[] token = s.split("::");
 			int len = token.length;
@@ -111,7 +111,7 @@ public class IMDBStudent20191011
 	}
 	
 	public static class IMDBStudent20191011Reducer extends Reducer<Text,Text,Text,Text> {
-		int topK = 0;
+		int topK = 2;
 		Comparator<Movie> comparator = new MovieComparator();
         PriorityQueue<Movie> queue = new PriorityQueue<Movie>(topK, comparator);
 
@@ -139,7 +139,7 @@ public class IMDBStudent20191011
 		}
 
         protected void setup(Context context) throws IOException, InterruptedException {
-            topK = context.getConfiguration().getInt("topK");
+            topK = context.getConfiguration().getInt("topK", 2);
         }
 
         protected void cleanup(Context context) throws IOException, InterruptedException {
@@ -154,19 +154,24 @@ public class IMDBStudent20191011
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration();
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
-        int topK = Integer.parseInt(otherArgs[2]);
-        conf.setInt("topK", topK);
+        // int topK = Integer.parseInt(otherArgs[2]);
+        // conf.setInt("topK", topK);
 
 		Job job = new Job(conf, "imdbstudent20191011");
 		job.setJarByClass(IMDBStudent20191011.class);
 		job.setMapperClass(IMDBStudent20191011Mapper.class);
-		job.setCombinerClass(IMDBStudent20191011Reducer.class);
+		// job.setCombinerClass(IMDBStudent20191011Reducer.class);
 		job.setReducerClass(IMDBStudent20191011Reducer.class);
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
+        job.setNumReduceTasks(1);
+        job.setInputFormatClass(KeyValueTextInputFormat.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
-		FileSystem.get(job.getConfiguration()).delete( new Path(args[1]), true);
+		// FileSystem.get(job.getConfiguration()).delete( new Path(args[1]), true);
+
+        job.getConfiguration().setInt("topK", Integer.parseInt(args[2]));
 		job.waitForCompletion(true);
 	}
 }
