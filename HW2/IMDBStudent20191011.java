@@ -220,13 +220,14 @@ public class IMDBStudent20191011
             }
         }
 	}
-	}
 
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration();
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
-        // int topK = Integer.parseInt(otherArgs[2]);
-        // conf.setInt("topK", topK);
+        if (otherArgs.length != 3) {
+            System.err.println("Usage: IMDBStudent20191003 <in> <out>");
+            System.exit(2);
+        }
 
         conf.setInt("topK", Integer.valueOf(otherArgs[2]));
 		Job job = new Job(conf, "IMDBStudent20191011");
