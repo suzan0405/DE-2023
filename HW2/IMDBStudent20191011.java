@@ -1,4 +1,4 @@
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 import org.apache.hadoop.conf.*;
@@ -6,6 +6,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.*;
+import org.apache.hadoop.mapred.lib.*;
 import org.apache.hadoop.mapreduce.lib.input.*;
 import org.apache.hadoop.mapreduce.lib.output.*;
 import org.apache.hadoop.util.GenericOptionsParser;
@@ -228,7 +229,7 @@ public class IMDBStudent20191011
         // conf.setInt("topK", topK);
 
         conf.setInt("topK", Integer.valueOf(otherArgs[2]));
-		Job job = new Job(conf, "imdbstudent20191011");
+		Job job = new Job(conf, "IMDBStudent20191011");
 		job.setJarByClass(IMDBStudent20191011.class);
 		job.setMapperClass(IMDBStudent20191011Mapper.class);
 		job.setReducerClass(IMDBStudent20191011Reducer.class);
@@ -246,6 +247,6 @@ public class IMDBStudent20191011
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 		FileSystem.get(job.getConfiguration()).delete( new Path(args[1]), true);
-		job.waitForCompletion(true);
+		System.exit(job.waitForCompletion(true) ? 0 : 1);
 	}
 }
